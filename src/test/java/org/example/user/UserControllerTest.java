@@ -105,9 +105,9 @@ public class UserControllerTest {
             when(userResponseMapper.toDto(expectedUser)).thenReturn(expectedUserDto);
             when(userRequestMapper.toEntity(expectedUserDto)).thenReturn(expectedUser);
 
-            Assertions.assertThrows(MethodArgumentNotValidException.class, () ->
-                    controller.create(expectedUserDto).getBody()
-            );
+            ResponseEntity<UserResponseDto> actualResponse =  controller.create(expectedUserDto);
+
+            Assertions.assertEquals(HttpStatus.BAD_REQUEST, actualResponse.getStatusCode());
         }
     }
 
