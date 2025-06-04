@@ -4,11 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Schema(description = "Информация о пользователе")
+@Schema(description = "User info")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserResponseDto extends UserRequestDto {
 
-    @Schema(description = "ID пользователя")
+    @Schema(description = "User ID")
     public Long id;
 }
