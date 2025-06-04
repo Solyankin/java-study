@@ -2,7 +2,7 @@ package org.example.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.model.User;
+import org.example.model.user.User;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class UserService {
 
         optionalUser.ifPresent(user -> {
             user.setFirstName(u.getFirstName());
-            user.setSecondName(u.getSecondName());
+            user.setLastName(u.getLastName());
             repository.save(user);
         });
 

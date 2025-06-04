@@ -1,6 +1,6 @@
 package org.example.user;
 
-import org.example.model.User;
+import org.example.model.user.User;
 import org.example.repository.UserRepository;
 import org.example.service.UserService;
 import org.junit.jupiter.api.Assertions;
