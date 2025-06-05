@@ -21,6 +21,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     implementation 'org.liquibase:liquibase-core'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
     runtimeOnly 'com.h2database:h2'
 
 

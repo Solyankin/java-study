@@ -7,6 +7,9 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="external_id" type="varchar(36)" remarks="Индивидуальный клиентский профиль">
+                <constraints nullable="false" unique="true"/>
+            </column>
             <column name="first_name" type="varchar(50)" remarks="Имя пользователя">
                 <constraints nullable="false" />
             </column>

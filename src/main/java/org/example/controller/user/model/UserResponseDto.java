@@ -9,6 +9,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class UserResponseDto extends UserRequestDto {
 
-    @Schema(description = "User ID")
-    public Long id;
+    @Schema(description = "User id")
+    public String id;
 }
