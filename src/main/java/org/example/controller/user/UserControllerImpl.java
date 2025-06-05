@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @RestController
@@ -27,9 +28,12 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<UserResponseDto> get(String id) {
         Optional<User> user = service.getByExternalId(id);
 
-        return user
-                .map(u -> ResponseEntity.ok(userResponseMapper.toDto(u)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        if (user.isEmpty()) {
+            throwExceptionIfUserNotFound(id);
+        }
+
+        return ResponseEntity.ok(userResponseMapper.toDto(user.get()));
+
     }
 
     @Override
@@ -44,17 +48,25 @@ public class UserControllerImpl implements UserController {
         User user = userRequestMapper.toEntity(userDto);
         Optional<User> updatedUser = service.updateByExternalId(id, user);
 
-        return updatedUser
-                .map(u -> ResponseEntity.ok(userResponseMapper.toDto(u)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        if (updatedUser.isEmpty()) {
+            throwExceptionIfUserNotFound(id);
+        }
+
+        return ResponseEntity.ok(userResponseMapper.toDto(user));
     }
 
     @Override
     public ResponseEntity<UserResponseDto> delete(String id) {
         Optional<User> user = service.deleteByExternalId(id);
 
-        return user
-                .map(u -> ResponseEntity.ok(userResponseMapper.toDto(u)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        if (user.isEmpty()) {
+            throwExceptionIfUserNotFound(id);
+        }
+
+        return ResponseEntity.ok(userResponseMapper.toDto(user.get()));
+    }
+
+    private void throwExceptionIfUserNotFound(String id) {
+        throw new EntityNotFoundException(String.format("User not found with id '%s'", id));
     }
 }
