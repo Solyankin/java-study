@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.provider.Arguments;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,9 +19,7 @@ import org.springframework.http.ResponseEntity;
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -155,5 +152,5 @@ public class UserControllerTest {
             );
         }
     }
-    
+
 }
