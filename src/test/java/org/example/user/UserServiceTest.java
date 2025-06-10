@@ -1,6 +1,6 @@
 package org.example.user;
 
-import org.example.model.User;
+import org.example.model.user.User;
 import org.example.repository.UserRepository;
 import org.example.service.UserService;
 import org.junit.jupiter.api.Assertions;
@@ -27,7 +27,7 @@ public class UserServiceTest {
 
     @Test
     void get_test() {
-        User expectedUser = new User(1L, "FirstName", "SecondName");
+        User expectedUser = new User("FirstName", "SecondName");
         when(repository.findById(expectedUser.getId())).thenReturn(Optional.of(expectedUser));
 
 
@@ -45,7 +45,7 @@ public class UserServiceTest {
 
     @Test
     void create_test() {
-        User expectedUser = new User(1L, "FirstName", "SecondName");
+        User expectedUser = new User("FirstName", "SecondName");
         when(repository.save(expectedUser)).thenReturn(expectedUser);
 
         User actualUser = service.create(expectedUser);
@@ -54,7 +54,7 @@ public class UserServiceTest {
 
     @Test
     void delete_test() {
-        User expectedUser = new User(1L, "FirstName", "SecondName");
+        User expectedUser = new User("FirstName", "SecondName");
 
         when(repository.findById(expectedUser.getId())).thenReturn(Optional.of(expectedUser));
         doNothing().when(repository).delete(expectedUser);
@@ -64,7 +64,7 @@ public class UserServiceTest {
 
     @Test
     void delete_not_found_test() {
-        User expectedUser = new User(1L, "FirstName", "SecondName");
+        User expectedUser = new User("FirstName", "SecondName");
 
         when(repository.findById(expectedUser.getId())).thenReturn(Optional.empty());
 
@@ -73,7 +73,7 @@ public class UserServiceTest {
 
     @Test
     void update_test() {
-        User expectedUser = new User(1L, "FirstName", "SecondName");
+        User expectedUser = new User("FirstName", "SecondName");
 
         when(repository.save(expectedUser)).thenReturn(expectedUser);
         when(repository.findById(expectedUser.getId())).thenReturn(Optional.of(expectedUser));
@@ -86,7 +86,7 @@ public class UserServiceTest {
 
     @Test
     void update_not_found_test() {
-        User expectedUser = new User(1L, "FirstName", "SecondName");
+        User expectedUser = new User("FirstName", "SecondName");
         when(repository.findById(expectedUser.getId())).thenReturn(Optional.empty());
         Assertions.assertFalse(service.update(expectedUser.getId(), expectedUser).isPresent());
     }
