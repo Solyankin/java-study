@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -64,10 +65,9 @@ public class UserControllerTest {
         void get_not_found_test() {
             when(service.getByExternalId(anyString())).thenReturn(Optional.empty());
 
-            ResponseEntity<UserResponseDto> actualUser = controller.get(UUID.randomUUID().toString());
-
-            Assertions.assertEquals(HttpStatus.NOT_FOUND, actualUser.getStatusCode());
-            Assertions.assertNull(actualUser.getBody());
+            Assertions.assertThrows(EntityNotFoundException.class, ()->
+                            controller.get(UUID.randomUUID().toString())
+            );
         }
     }
 
@@ -136,10 +136,9 @@ public class UserControllerTest {
         void delete_not_found_test() {
             User expectedUser = new User("FirstName", "SecondName");
 
-            ResponseEntity<UserResponseDto> actualUserResponse = controller.delete(expectedUser.getExternalId());
-
-            Assertions.assertEquals(HttpStatus.NOT_FOUND, actualUserResponse.getStatusCode());
-            Assertions.assertNull(actualUserResponse.getBody());
+            Assertions.assertThrows(EntityNotFoundException.class, ()->
+                    controller.delete(expectedUser.getExternalId())
+            );
         }
     }
 
@@ -172,9 +171,9 @@ public class UserControllerTest {
             expectedUserDto.setFirstName(expectedUser.getFirstName());
             expectedUserDto.setLastName(expectedUser.getLastName());
 
-            ResponseEntity<UserResponseDto> actualUserDto = controller.update(expectedUser.getExternalId(), expectedUserDto);
-            Assertions.assertEquals(HttpStatus.NOT_FOUND, actualUserDto.getStatusCode());
-            Assertions.assertNull(actualUserDto.getBody());
+            Assertions.assertThrows(EntityNotFoundException.class, ()->
+                    controller.update(expectedUser.getExternalId(), expectedUserDto)
+            );
         }
     }
 

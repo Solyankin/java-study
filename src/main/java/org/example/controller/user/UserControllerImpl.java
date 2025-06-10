@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/v1/users")
-@Tag(name = "User API", description = "Users")
+//@RestController
+//@RequestMapping("/api/v1/users")
+//@Tag(name = "User API", description = "Users")
 @RequiredArgsConstructor
 public class UserControllerImpl implements UserController {
     private final UserService service;
