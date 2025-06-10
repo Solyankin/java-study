@@ -155,12 +155,5 @@ public class UserControllerTest {
             );
         }
     }
-
-
-    static Stream<Arguments> validUser() {
-        return Stream.of(
-                Arguments.of(randomAlphabetic(2), randomAlphabetic(50)),
-                Arguments.of(randomAlphabetic(50), randomAlphabetic(2))
-        );
-    }
+    
 }
