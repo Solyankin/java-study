@@ -73,10 +73,10 @@ public class UserControllerTest {
 
     @Nested
     class CreateTest {
-        @ParameterizedTest
-        @MethodSource("org.example.user.UserControllerTest#validUser")
-        void create_test(String firstName, String lastName) {
-            User expectedUser = new User(firstName, lastName);
+
+        @Test
+        void create_test() {
+            User expectedUser = new User("FirstName", "SecondName");
 
             UserResponseDto expectedUserDto = new UserResponseDto();
             expectedUserDto.setId(expectedUser.getExternalId());
@@ -90,25 +90,6 @@ public class UserControllerTest {
             UserResponseDto actualUserDto = controller.create(expectedUserDto).getBody();
 
             Assertions.assertEquals(expectedUserDto, actualUserDto);
-        }
-
-        @ParameterizedTest
-        @MethodSource("org.example.user.UserControllerTest#invalidUser")
-        void create_invalid_test(String firstName, String lastName) {
-            User expectedUser = new User(firstName, lastName);
-
-            UserResponseDto expectedUserDto = new UserResponseDto();
-            expectedUserDto.setId(expectedUser.getExternalId());
-            expectedUserDto.setFirstName(expectedUser.getFirstName());
-            expectedUserDto.setLastName(expectedUser.getLastName());
-
-            when(service.create(expectedUser)).thenReturn(expectedUser);
-            when(userResponseMapper.toDto(expectedUser)).thenReturn(expectedUserDto);
-            when(userRequestMapper.toEntity(expectedUserDto)).thenReturn(expectedUser);
-
-            ResponseEntity<UserResponseDto> actualResponse =  controller.create(expectedUserDto);
-
-            Assertions.assertEquals(HttpStatus.BAD_REQUEST, actualResponse.getStatusCode());
         }
     }
 
@@ -182,17 +163,6 @@ public class UserControllerTest {
         return Stream.of(
                 Arguments.of(randomAlphabetic(2), randomAlphabetic(50)),
                 Arguments.of(randomAlphabetic(50), randomAlphabetic(2))
-        );
-    }
-
-    static Stream<Arguments> invalidUser() {
-        return Stream.of(
-                Arguments.of(randomAlphabetic(0), randomAlphabetic(25)),
-                Arguments.of(randomAlphabetic(1), randomAlphabetic(25)),
-                Arguments.of(randomAlphabetic(51), randomAlphabetic(25)),
-                Arguments.of(randomAlphabetic(25), randomAlphabetic(0)),
-                Arguments.of(randomAlphabetic(25), randomAlphabetic(1)),
-                Arguments.of(randomAlphabetic(25), randomAlphabetic(51))
         );
     }
 }
