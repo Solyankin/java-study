@@ -1,6 +1,5 @@
 package org.example.controller.user;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.controller.user.mapper.UserRequestMapper;
 import org.example.controller.user.mapper.UserResponseMapper;
@@ -9,15 +8,12 @@ import org.example.controller.user.model.UserResponseDto;
 import org.example.model.user.User;
 import org.example.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
-//@RestController
-//@RequestMapping("/api/v1/users")
-//@Tag(name = "User API", description = "Users")
+@RestController
 @RequiredArgsConstructor
 public class UserControllerImpl implements UserController {
     private final UserService service;
