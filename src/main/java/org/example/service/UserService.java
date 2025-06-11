@@ -17,7 +17,7 @@ public class UserService {
 
     private final UserRepository repository;
 
-    @Cacheable(value = "users", key = "#externalId")
+    @Cacheable(value = "users_external", key = "#externalId")
     public Optional<User> getByExternalId(String externalId) {
         return repository.findByExternalId(externalId);
     }
@@ -32,7 +32,7 @@ public class UserService {
         return repository.save(user);
     }
 
-    @CachePut(value = "users", key = "#externalId")
+    @CachePut(value = "users_external", key = "#externalId")
     public Optional<User> updateByExternalId(String externalId, User patch) {
         Optional<User> optionalUser = repository.findByExternalId(externalId);
         optionalUser.ifPresent(user -> update(user, patch));
@@ -53,7 +53,7 @@ public class UserService {
         repository.save(user);
     }
 
-    @CacheEvict(value = "users", key = "#externalId")
+    @CacheEvict(value = "users_external", key = "#externalId")
     public Optional<User> deleteByExternalId(String externalId) {
         Optional<User> user = repository.findByExternalId(externalId);
         user.ifPresent(repository::delete);
