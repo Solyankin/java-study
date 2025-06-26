@@ -1,7 +1,10 @@
 package org.example.service;
 
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.example.exception.UserNotFoundException;
 import org.example.model.user.User;
 import org.example.repository.UserRepository;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,6 +19,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository repository;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Cacheable(value = "users_external", key = "#externalId")
     public Optional<User> getByExternalId(String externalId) {
@@ -33,38 +37,37 @@ public class UserService {
     }
 
     @CachePut(value = "users_external", key = "#externalId")
-    public Optional<User> updateByExternalId(String externalId, User patch) {
-        Optional<User> optionalUser = repository.findByExternalId(externalId);
-        optionalUser.ifPresent(user -> update(user, patch));
-        return optionalUser;
+    public User updateByExternalId(String externalId, User patch) throws JsonMappingException {
+        var user = repository.findByExternalId(externalId).orElseThrow(
+                () -> new UserNotFoundException(externalId)
+        );
+        update(user, patch);
+        return user;
     }
 
     @CachePut(value = "users", key = "#id")
-    public Optional<User> update(Long id, User patch) {
-        Optional<User> optionalUser = get(id);
-
-        optionalUser.ifPresent(user -> update(user, patch));
-        return optionalUser;
+    public User update(Long id, User patch) throws JsonMappingException {
+        var user = get(id).orElseThrow(
+                () -> new UserNotFoundException(id)
+        );
+        update(user, patch);
+        return user;
     }
 
-    private void update(User user, User patch) {
-        user.setFirstName(patch.getFirstName());
-        user.setLastName(patch.getLastName());
+    private void update(User user, User patch) throws JsonMappingException {
+        mapper.updateValue(user, patch);
         repository.save(user);
     }
 
     @CacheEvict(value = "users_external", key = "#externalId")
-    public Optional<User> deleteByExternalId(String externalId) {
+    public void deleteByExternalId(String externalId) {
         Optional<User> user = repository.findByExternalId(externalId);
         user.ifPresent(repository::delete);
-        return user;
     }
 
     @CacheEvict(value = "users", key = "#id")
-    public Optional<User> delete(Long id) {
-        Optional<User> user = repository.findById(id);
-        user.ifPresent(repository::delete);
-        return user;
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }
 
