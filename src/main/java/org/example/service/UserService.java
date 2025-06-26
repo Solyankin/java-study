@@ -2,7 +2,6 @@ package org.example.service;
 
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.exception.UserNotFoundException;
 import org.example.model.user.User;
@@ -19,7 +18,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository repository;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final UserObjectMapper mapper;
 
     @Cacheable(value = "users_external", key = "#externalId")
     public Optional<User> getByExternalId(String externalId) {
@@ -38,7 +37,7 @@ public class UserService {
 
     @CachePut(value = "users_external", key = "#externalId")
     public User updateByExternalId(String externalId, User patch) throws JsonMappingException {
-        var user = repository.findByExternalId(externalId).orElseThrow(
+        User user = repository.findByExternalId(externalId).orElseThrow(
                 () -> new UserNotFoundException(externalId)
         );
         update(user, patch);
@@ -47,7 +46,7 @@ public class UserService {
 
     @CachePut(value = "users", key = "#id")
     public User update(Long id, User patch) throws JsonMappingException {
-        var user = get(id).orElseThrow(
+        User user = get(id).orElseThrow(
                 () -> new UserNotFoundException(id)
         );
         update(user, patch);

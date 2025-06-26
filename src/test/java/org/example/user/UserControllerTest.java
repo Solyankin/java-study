@@ -1,9 +1,11 @@
 package org.example.user;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.example.controller.user.UserControllerImpl;
 import org.example.controller.user.mapper.UserRequestMapper;
 import org.example.controller.user.mapper.UserResponseMapper;
 import org.example.controller.user.model.UserResponseDto;
+import org.example.exception.UserNotFoundException;
 import org.example.model.user.User;
 import org.example.service.UserService;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,8 +63,8 @@ public class UserControllerTest {
         void get_not_found_test() {
             when(service.getByExternalId(anyString())).thenReturn(Optional.empty());
 
-            Assertions.assertThrows(EntityNotFoundException.class, ()->
-                            controller.get(UUID.randomUUID().toString())
+            Assertions.assertThrows(EntityNotFoundException.class, () ->
+                    controller.get(UUID.randomUUID().toString())
             );
         }
     }
@@ -99,29 +102,15 @@ public class UserControllerTest {
             expectedUserDto.setFirstName(expectedUser.getFirstName());
             expectedUserDto.setLastName(expectedUser.getLastName());
 
-            when(service.deleteByExternalId(expectedUserDto.getId())).thenReturn(Optional.of(expectedUser));
-            when(userResponseMapper.toDto(expectedUser)).thenReturn(expectedUserDto);
-
-            ResponseEntity<UserResponseDto> actualUserResponse = controller.delete(expectedUser.getExternalId());
-
-            Assertions.assertEquals(HttpStatus.OK, actualUserResponse.getStatusCode());
-            Assertions.assertEquals(expectedUserDto, actualUserResponse.getBody());
-        }
-
-        @Test
-        void delete_not_found_test() {
-            User expectedUser = new User("FirstName", "SecondName");
-
-            Assertions.assertThrows(EntityNotFoundException.class, ()->
-                    controller.delete(expectedUser.getExternalId())
-            );
+            ResponseEntity<Void> actualUserResponse = controller.delete(expectedUser.getExternalId());
+            Assertions.assertEquals(HttpStatus.NO_CONTENT, actualUserResponse.getStatusCode());
         }
     }
 
     @Nested
     class UpdateTest {
         @Test
-        void update_test() {
+        void update_test() throws IOException {
             User expectedUser = new User("FirstName", "SecondName");
 
             UserResponseDto expectedUserDto = new UserResponseDto();
@@ -129,7 +118,7 @@ public class UserControllerTest {
             expectedUserDto.setFirstName(expectedUser.getFirstName());
             expectedUserDto.setLastName(expectedUser.getLastName());
 
-            when(service.updateByExternalId(expectedUser.getExternalId(), expectedUser)).thenReturn(Optional.of(expectedUser));
+            when(service.updateByExternalId(expectedUser.getExternalId(), expectedUser)).thenReturn(expectedUser);
             when(userResponseMapper.toDto(expectedUser)).thenReturn(expectedUserDto);
             when(userRequestMapper.toEntity(expectedUserDto)).thenReturn(expectedUser);
 
@@ -139,15 +128,17 @@ public class UserControllerTest {
         }
 
         @Test
-        void update_not_found_test() {
+        void update_not_found_test() throws IOException {
             User expectedUser = new User("FirstName", "SecondName");
 
             UserResponseDto expectedUserDto = new UserResponseDto();
             expectedUserDto.setId(expectedUser.getExternalId());
             expectedUserDto.setFirstName(expectedUser.getFirstName());
             expectedUserDto.setLastName(expectedUser.getLastName());
+            when(service.getByExternalId(expectedUser.getExternalId())).thenReturn(Optional.empty());
 
-            Assertions.assertThrows(EntityNotFoundException.class, ()->
+            var u = controller.update(expectedUser.getExternalId(), expectedUserDto);
+            Assertions.assertThrows(UserNotFoundException.class, () ->
                     controller.update(expectedUser.getExternalId(), expectedUserDto)
             );
         }

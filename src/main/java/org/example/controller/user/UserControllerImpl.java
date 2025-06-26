@@ -1,16 +1,17 @@
 package org.example.controller.user;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.RequiredArgsConstructor;
 import org.example.controller.user.mapper.UserRequestMapper;
 import org.example.controller.user.mapper.UserResponseMapper;
 import org.example.controller.user.model.UserRequestDto;
 import org.example.controller.user.model.UserResponseDto;
+import org.example.exception.UserNotFoundException;
 import org.example.model.user.User;
 import org.example.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @RestController
@@ -25,7 +26,7 @@ public class UserControllerImpl implements UserController {
         Optional<User> user = service.getByExternalId(id);
 
         if (user.isEmpty()) {
-            throwExceptionIfUserNotFound(id);
+            throw new UserNotFoundException(id);
         }
 
         return ResponseEntity.ok(userResponseMapper.toDto(user.get()));
@@ -40,29 +41,15 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> update(String id, UserRequestDto userDto) {
+    public ResponseEntity<UserResponseDto> update(String id, UserRequestDto userDto) throws JsonMappingException {
         User user = userRequestMapper.toEntity(userDto);
-        Optional<User> updatedUser = service.updateByExternalId(id, user);
-
-        if (updatedUser.isEmpty()) {
-            throwExceptionIfUserNotFound(id);
-        }
-
-        return ResponseEntity.ok(userResponseMapper.toDto(user));
+        User updatedUser = service.updateByExternalId(id, user);
+        return ResponseEntity.ok(userResponseMapper.toDto(updatedUser));
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> delete(String id) {
-        Optional<User> user = service.deleteByExternalId(id);
-
-        if (user.isEmpty()) {
-            throwExceptionIfUserNotFound(id);
-        }
-
-        return ResponseEntity.ok(userResponseMapper.toDto(user.get()));
-    }
-
-    private void throwExceptionIfUserNotFound(String id) {
-        throw new EntityNotFoundException(String.format("User not found with id '%s'", id));
+    public ResponseEntity<Void> delete(String id) {
+        service.deleteByExternalId(id);
+        return ResponseEntity.noContent().build();
     }
 }

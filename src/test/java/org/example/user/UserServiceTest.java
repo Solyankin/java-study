@@ -1,7 +1,10 @@
 package org.example.user;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.example.exception.UserNotFoundException;
 import org.example.model.user.User;
 import org.example.repository.UserRepository;
+import org.example.service.UserObjectMapper;
 import org.example.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,8 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -20,6 +25,9 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository repository;
+
+    @Mock
+    private UserObjectMapper mapper;
 
     @InjectMocks
     private UserService service;
@@ -53,13 +61,15 @@ public class UserServiceTest {
     }
 
     @Test
-    void delete_test() {
+    void delete_test() throws IOException {
         User expectedUser = new User("FirstName", "SecondName");
 
         when(repository.findById(expectedUser.getId())).thenReturn(Optional.of(expectedUser));
         doNothing().when(repository).delete(expectedUser);
+        when(mapper.updateValue(any(), any())).thenReturn(expectedUser);
 
-        Assertions.assertTrue(service.delete(expectedUser.getId()).isPresent());
+        service.delete(expectedUser.getId());
+        Assertions.assertTrue(service.get(expectedUser.getId()).isEmpty());
     }
 
     @Test
@@ -67,27 +77,28 @@ public class UserServiceTest {
         User expectedUser = new User("FirstName", "SecondName");
 
         when(repository.findById(expectedUser.getId())).thenReturn(Optional.empty());
-
-        Assertions.assertFalse(service.delete(expectedUser.getId()).isPresent());
+        service.delete(expectedUser.getId());
+        Assertions.assertTrue(service.get(expectedUser.getId()).isEmpty());
     }
 
     @Test
-    void update_test() {
+    void update_test() throws IOException {
         User expectedUser = new User("FirstName", "SecondName");
 
         when(repository.save(expectedUser)).thenReturn(expectedUser);
         when(repository.findById(expectedUser.getId())).thenReturn(Optional.of(expectedUser));
+        when(mapper.updateValue(any(), any())).thenReturn(expectedUser);
 
-        Optional<User> actualUser = service.update(expectedUser.getId(), expectedUser);
-
-        Assertions.assertTrue(actualUser.isPresent());
-        Assertions.assertEquals(expectedUser, actualUser.get());
+        User actualUser = service.update(expectedUser.getId(), expectedUser);
+        Assertions.assertEquals(expectedUser, actualUser);
     }
 
     @Test
     void update_not_found_test() {
         User expectedUser = new User("FirstName", "SecondName");
         when(repository.findById(expectedUser.getId())).thenReturn(Optional.empty());
-        Assertions.assertFalse(service.update(expectedUser.getId(), expectedUser).isPresent());
+        Assertions.assertThrows(UserNotFoundException.class,
+                () -> service.update(expectedUser.getId(), expectedUser)
+        );
     }
 }

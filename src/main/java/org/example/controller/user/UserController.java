@@ -1,5 +1,6 @@
 package org.example.controller.user;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.controller.user.model.UserRequestDto;
 import org.example.controller.user.model.UserResponseDto;
@@ -17,8 +18,8 @@ interface UserController {
     ResponseEntity<UserResponseDto> create(@RequestBody UserRequestDto userDto);
 
     @PutMapping("/{id}")
-    ResponseEntity<UserResponseDto> update(@PathVariable String id, @RequestBody UserRequestDto userDto);
+    ResponseEntity<UserResponseDto> update(@PathVariable String id, @RequestBody UserRequestDto userDto) throws JsonMappingException;
 
     @DeleteMapping("/{id}")
-    ResponseEntity<UserResponseDto> delete(@PathVariable String id);
+    ResponseEntity<Void> delete(@PathVariable String id);
 }
