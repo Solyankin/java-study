@@ -7,9 +7,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.example.cache.annotations.CustomCacheEvict;
 import org.example.cache.annotations.CustomCachePut;
 import org.example.cache.annotations.CustomCacheable;
-import org.example.cache.manager.CustomCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -23,11 +23,10 @@ import java.lang.reflect.Method;
 
 @Aspect
 @Configuration
-@Profile("inMemory")
 public class CustomCacheAspect {
 
     @Autowired
-    private CustomCacheManager cacheManager;
+    private CacheManager cacheManager;
 
     private static final ParameterNameDiscoverer PARAMETER_NAME_DISCOVERER = new DefaultParameterNameDiscoverer();
     private static final ExpressionParser SPEL_PARSER = new SpelExpressionParser();
