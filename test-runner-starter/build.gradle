@@ -20,15 +20,7 @@ dependencies {
     compileOnly 'org.springframework.boot:spring-boot-configuration-processor'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
-
-//java {
-//    toolchain {
-//        languageVersion = JavaLanguageVersion.of(21)
-//    }
-//    withSourcesJar()
-//}
 
 tasks.withType(JavaCompile).configureEach {
     options.release = 11
