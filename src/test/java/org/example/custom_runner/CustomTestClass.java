@@ -1,6 +1,6 @@
 package org.example.custom_runner;
 
-import org.example.test.runner.annotations.*;
+import org.example.runner.annotations.*;
 
 public class CustomTestClass {
 

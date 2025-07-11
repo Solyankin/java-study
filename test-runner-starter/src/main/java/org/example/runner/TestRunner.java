@@ -1,6 +1,6 @@
-package org.example.test.runner;
+package org.example.runner;
 
-import org.example.test.runner.annotations.*;
+import org.example.runner.annotations.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;

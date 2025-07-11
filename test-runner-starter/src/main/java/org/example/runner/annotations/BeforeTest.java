@@ -1,4 +1,4 @@
-package org.example.test.runner.annotations;
+package org.example.runner.annotations;
 
 
 import java.lang.annotation.ElementType;
