@@ -3,7 +3,8 @@ package org.example.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.example.JwtProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -13,11 +14,10 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtils {
 
-
-    @Value("${jwt.secret}")
-    private String secret;
+    private final JwtProperties properties;
 
     public Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
@@ -53,6 +53,6 @@ public class JwtUtils {
     }
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        return Keys.hmacShaKeyFor(properties.getSecret().getBytes());
     }
 }

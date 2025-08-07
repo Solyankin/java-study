@@ -59,7 +59,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         Map<String, String> body = Map.of(
                 "error", "token_expired",
-                "auth_url", "/api/v1/auth"
+                "access_token_url", "/api/v1/auth",
+                "refresh_token_url", "/api/v1/refresh"
         );
 
         new ObjectMapper().writeValue(response.getWriter(), body);
